@@ -1,0 +1,512 @@
+Source 一些文件，设置环境变量、工具等 为了使环境统一
+
+which gcc
+/opt/swe 被挂载ntf格式
+
+Mount | grep swe
+
+/usr/atria/bin/cleartool
+
+Ct help 或 ct –
+
+Hijack文件
+
+
+Ct lsvob
+
+* /vobs/base_training  /net/sbardwf6/vol/cc_stg_demo/Vobs/base_training.vbs public
+第一个*表示该VOB被mount了，如果没有*表示没有mount
+Public用在多点开发，该vob可能在多个站点被访问
+
+Ct mount –a mount所有的vob
+
+Ct setview view_tag
+Ct endview  view_tag用在删除view时，如果该view总报is being used
+
+
+未登录的shell看view 的代码，进入/view/view_tag/ e.g.  /view/wenlongw_oam_lr13l_eccm2_rate7_158142/vobs/lte_oam_ucm/lte_oam
+
+
+rnctest(enodeb/linux)@lab238lte212> ct lsview -l wenlongw_test_view1
+Tag: wenlongw_test_view1
+  Global path: /net/lab238lte212/localdisk/view_store/wenlongw_test_view1.vws
+  Server host: lab238lte212
+  Region: CC_DEMO
+  Active: YES
+  View tag uuid:a68ae15d.3e8811e2.9d75.00:19:b9:f7:c8:0f
+View on host: lab238lte212
+View server access path: /localdisk/view_store/wenlongw_test_view1.vws
+View uuid: a68ae15d.3e8811e2.9d75.00:19:b9:f7:c8:0f
+View owner: rdc.sbamc/rnctest
+
+
+删除view可以用ct rmview它可以分解为3步，如下：
+1.Ct rmtag –view 
+2.Ct unreg –view
+3.Rm  -rf view_storage
+
+创建view也可以把3步反过来
+
+
+当gpath和hpath不一致时，setview会出错，
+
+
+Ct lsvob –short
+Ct lsview –short
+
+Ct desc,详细显示出要显示的内容
+Ct desc –l vob:/vobs/cctest
+Ct desc –l stream
+Ct desc –l activity
+
+View没有describe
+
+根据 view查看 stream 
+ct lsstream -view wenlongw_oam_lr133_166877
+
+Ct desc -l stream :shjwang_tlte_tlal.O@/vobs/title_pvob
+
+
+
+Clearlicense查看license
+
+
+
+
+分支名称一般都是小写的如main
+Label名称一般都用大写
+
+
+选取规则， Rule: /main/LATEST   主分支最新的结点
+
+
+
+
+Ct ls
+Ct lsvtree –g –all <element name>
+Ct mklbtype –nc TEST01
+
+
+Ct mklabel –nc TEST01 File1
+
+
+文件扩展名
+file@@/main/branch/number e.g. util.c@@/main/4
+
+
+
+
+Clear Case 分为register Server,VOB Server物理路径不是放在这里，只放vob的注册信息，View Server和 user client
+Register server >= vob server>=view server>= user client版本 的关系
+
+Win 7 只能安装7.1以上的版本
+
+
+Ct pwv
+
+Ct diff a@@/main/17 a@@/main/18
+
+
+
+创建view 
+创建branch
+>ct mkbrtype -nc wenlong_test_branch1
+
+
+拉分支
+ct mkbranch -nc -nco wenlong_test_branch1 hello
+
+
+
+ct lsco –cview –all -s
+ct lsco –cview –avob -s
+
+
+ct unco –keep  文件日期是文件实际修改时的日期
+
+ct man lsco 
+
+
+
+ct lsview -properties wenlongw_test_view1 查看view的创建日期，修改日期，最后一次access日期
+
+
+
+
+cp abc@@/main/1 abc
+
+
+
+ct merge –to /vobs/cctest/test.c –ver /main
+
+
+
+
+vncpasswd改密码
+
+
+如果手工copy edit替代了merge，那建议手工画一条线，ct mkhlink merge 
+
+
+
+
+Meta-data类型：
+1.	element type
+2.	branch type
+3.	label type
+4.	attribute type
+5.	Hyperlink type
+6.	Trigger type
+
+
+
+
+先建label type然后才能打label 大写label
+到一个vob下面，然后执行下面命令看有哪些label type
+Ct lstype –kind lbtype
+
+如果 没有，执行ct mklbtype –nc 
+
+
+Ct lstype –kind brtype:branch名称
+
+Ct mkbranch <brtype name> -nc <element@@version>
+
+
+Baseline一组label的集合，
+
+
+
+Ct mklabel –recurse –nc TEST .对当前目录下所有的目录子目录的文件打label
+
+Ct mklabel –replace TEST file@@main/4  把label TEST移动到4结点上面
+
+
+
+Umask  = 777-rwx 一般等于2 打umask 再回车可见
+
+如果将脚本（py,pl,sh）放入clearcase之前，要先chmod +x 加上执行权限，然后再ct mkelement  
+
+
+
+
+
+下面讲工作空间管理
+
+
+
+
+element * CHECKEDOUT
+element * /main/bugfix1/bugfix2/LATEST
+element * /main/bugfix1/LATEST -mkbranch bugfix2
+element * /main/LATEST -mkbranch bugfix1
+
+
+也可写成
+
+element * CHECKEDOUT
+element * …/bugfix2/LATEST
+element * …/bugfix1/LATEST -mkbranch bugfix2
+element * /main/LATEST -mkbranch bugfix1
+
+
+查看私有文件
+ct lsprivate –tag VIEW1
+
+ct catcs –tag VIEW1
+
+
+
+2012/12/6
+流程控制
+如果两个结点被lock了，就不能再对这些结点做任何操作，但是可以读和拉分支
+
+不建议修改label，要重新再建立一个label再打上去
+
+删除label有2种方式，如果文件较少把结点上的label删除；如果文件较多，把该label type删除。
+
+锁vob时
+Ct lock vob:/vobs/vobs1
+Ct nlock 
+
+Lock file/dir
+
+Lock label
+
+
+
+触发器
+
+
+
+Ct rmelem 最彻底，所有版本都删除
+Ct rmver 
+Ct rmname 删除文件，这会使它所在的目录增加一个新的结点在版本树上
+
+如在目录 opt下面的a.c被用ct rmname删除了，恢复时
+Ct ln a.c@@/main/2 a.c
+
+或者直接删除执行ct rmname时，使目录增加的那个新结点
+
+
+
+
+$ ct lstype -kind trtype
+2011-12-05     umtsadm     trigger type "UTS_checkin_pre"
+2011-12-05     umtsadm     trigger type "UTS_elem_safety_pre"
+2011-12-05     umtsadm     trigger type "UTS_mkelem_pre"
+2011-12-05     umtsadm     trigger type "UTS_type_safety_pre"
+2011-12-05     umtsadm     trigger type "UTS_unco_post"
+
+
+$ ct desc -l trtype:UTS_elem_safety_pre
+trigger type "UTS_elem_safety_pre"
+  created 2011-12-05T21:05:22+08:00 by Zhu_Li/upi=gej (umtsadm.bjumts@zsups106)
+  owner: umtsadm
+  group: bjumts
+  all element trigger
+  pre-operation rmelem, rmbranch, rmver
+  action: -execunix /opt/swe/tools/in/uts-1.6.1_lte/triggers/safety
+  action: -execwin \\zwans000.bj.lucent.com\swe\tools\in\uts-1.6.1_lte\triggers\safety
+
+
+脚本用来check in 所有的文件
+for file in `ct lsco –cview –s`
+do
+ct ci –nc $file
+done
+
+
+
+多点开发
+$ /usr/atria/bin/multitool lsreplica
+For VOB replica "/vobs/lte_oam_ucm":
+2011-03-22     vobadm      replica "SHBAK"
+  "/vobs/lte_oam_ucm"
+2010-11-15     cm_admin    replica "alu_acez"
+  "LTE OAM component vob"
+--10-21T04:38  ccnodeb     replica "alu_bangalore"
+--04-13T05:44  ccnodeb     replica "alu_lannion"
+--07-29T23:32  ccnodeb     replica "alu_marchroad"
+--02-17T02:19  ccnodeb     replica "alu_nanjing"
+--05-21T13:06  vobadm      replica "alu_nanjing_bak"
+2011-05-16     ccnodeb     replica "alu_orvault"
+2011-03-22     ccnodeb     replica "alu_shanghai_jq"
+2010-11-04     cm_admin    replica "alu_stuttgart"
+  "VOB used for UCM migration
+   This VOB will go in production"
+2010-11-04     cm_admin    replica "alu_timisoara"
+  "Timisoara replica for VOB: /vobs/lte_oam_ucm"
+2011-05-10     ccnodeb     replica "alu_wangjing"
+2010-12-27     ccnodeb     replica "alu_whippany"
+
+
+
+
+
+
+$ /usr/atria/bin/multitool lsepoch  SHBAK
+For VOB replica "/vobs/lte_oam_ucm":
+Oplog IDs for row "SHBAK" (@ sbardy11):
+ oid:2d80b88b.547c11e0.8d4b.00:01:84:74:34:d8=0           (SHBAK)
+ oid:c623b7f2.f09211df.8288.00:01:84:2c:00:d0=398         (alu_acez)
+ oid:1eedeb00.1af711e2.8a56.00:01:84:3a:b2:15=0           (alu_bangalore)
+ oid:ad15ab2c.84e911e1.81a1.00:01:84:3a:b2:15=0           (alu_lannion)
+ oid:a868198c.d99311e1.86e6.00:01:84:3a:b2:15=0           (alu_marchroad)
+ oid:cc15af11.58cb11e1.93b6.00:01:84:3a:b2:15=0           (alu_nanjing)
+ oid:c760586d.a30311e1.8f22.00:01:84:91:4a:92=0           (alu_nanjing_bak)
+ oid:c0720132.7f3111e0.82b4.00:01:84:3a:b2:15=0           (alu_orvault)
+ oid:98b3f9e0.53da11e0.820e.00:01:84:3a:b2:15=0           (alu_shanghai_jq)
+ oid:ca8a6471.e80611df.87e5.00:01:84:2c:00:d0=240712      (alu_stuttgart)
+ oid:caeaf0d2.e81b11df.9067.00:01:84:2c:00:d0=7282        (alu_timisoara)
+ oid:5965e999.7a7411e0.9966.00:01:84:3a:b2:15=0           (alu_wangjing)
+ oid:bb1e8abe.119e11e0.9592.00:01:84:3a:b2:15=0           (alu_whippany)
+
+
+ct lsregion
+
+ct lsview -region utran.windows
+
+
+
+
+/usr/atria/bin/multitool lsepoch
+mt lsepoch  来查看两个site是否同步
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UCM Clearcase
+
+Activity based change model
+
+Base     ucm
+Vob-------component:一组目录和文件的集合
+Label-----baseline
+Branch------stream
+
+-------------activity
+View---------------view
+
+Merge -------------deliver ,rebase
+
+
+VOB,  component在建vob时定义
+
+对一个项目，只有一个project。Icon为3个小人
+
+只知道stream的名字，找该 stream所在的project,先
+Ct lsstream -anc  stream_name@/vobs/pvob_name
+
+
+$ ct lsstream -anc  wenlongw_oam_lr13l_eccm2_rate7_158142
+RootFolder                     folder     "Root folder"
+  OAM                          folder
+    DEVELOPMENT_OAM            folder
+      oam_lr13l                project
+        *oam_lr13l_integration stream
+          oam_lr13l_conv       stream
+            oam_lr13l_eccm2_rate7_158142        stream
+              wenlongw_oam_lr13l_eccm2_rate7_158142     stream
+
+
+
+
+
+查看project  
+Ct lsproj –invob vobname
+
+Ct lsproj –l projname@/vobs/pvobname
+
+
+
+Ct lscomp 查看component的信息
+
+Ct lsbl  查看baseline
+
+
+
+ct lsact -l deliver.xchen034_tlte_tla1.0_dev.20121121.202427@/vobs/tlte_pvob
+
+
+ct desc -l activity:deliver.xchen034_tlte_tla1.0_dev.20121121.202427@/vobs/tlte_pvob
+
+
+
+ct setact 给view设定activity
+
+ct setact –none 从view上解绑定，其它view可用
+
+ct chact 将一个activity里的change set移动到别一个activity
+
+
+Join project和建立子stream效果差不多，join project时会让在父stream上建立view是为了deliver用
+
+
+向dev stream deliver时，只有当DWO是ready to submit时才能关联activity再做delivery
+向int stream deliver时，状态为code commited
+
+
+
+Uts link 
+
+uts help
+
+
+Deliver过程中，如果有一些跟自己无关的2进制文件e.g.a.exe，说有冲突，可以把parent stream上的该文件copy到该stream的view下。这样可以规避merge冲突。或该2进程文件就是要deliver的文件，就要把parent上的a.exe check out，然后把本stream view上的a.exe copy到parent stream的view下。
+
+Ct lsact –cact
+
+
+
+Activity的依赖关系，deliver后面的activity,需要同时deliver 前面的activity,也可以将前面activity的change set移动到最后的activity的change set中，用下面的命令
+Ct chact –nc –fcset xxxx –tcset xxxx versioninfo
+
+Ct lsact –l xxx查看一个activity的详细信息
+
+
+Ct lock –obs activity:xxxx@/vobs/tlte_pvob
+
+
+Ct delivery –target deliver时指定用某个view
+ct deliver -h
+Usage: deliver -graphical [-stream stream-selector] [-to integration-view-tag]
+               [-target stream-selector]
+               [-query | -qall]
+       deliver { -status [ -long ] } [-stream stream-selector]
+       deliver { -cancel [-stream stream-selector]
+               [-reset -to integration-view-tag]
+       deliver -preview [ -short | -long ]
+               [-stream stream-selector] [-to integration-view-tag]
+               [-target stream-selector]
+               [-cact | -activities activity-selector,... |
+                -baseline baseline-selector,...]
+       deliver [-stream stream-selector] [-to integration-view-tag]
+               [-target stream-selector]
+               [-activities activity-selector,... |
+                -baseline baseline-selector,...] [-complete]
+               [-gmerge | -ok] [-query | -abort | -qall] [-serial]
+               [-force]
+       deliver { -resume | -complete } [-stream stream-selector]
+               [[-reset] -to integration-view-tag]
+               [-gmerge | -ok] [-query | -abort | -qall] [-serial]
+               [-force]
+
+
+
+Recommend baseline
+
+Ct chstream –
+
+
+Rebase和deliver，
+不要点complete，测试完之后，再点complete
+
+
+
+
+
+UTS UTS UTS
+做remote的auto delivery
+
+  uts autodeliver
+
+当3个月，CSL密码修改后，登录uts时用，    uts delauth删除老密码。
+    uts delauth
+
+
+uts mkroview – 
+
+
+
+
+
+
+
+答疑：
+1.黄底月亮图标是本地私有文件和check out的文件同名冲突，3叹号图标表示check out的文件被删除了
+2.递归的加一个目录到clearcase版本控制库 linux  clearfsimport –follow –recurse –identical –preview /tmp/lib /vobs/test/lib   在这之前，一定要把config spec设置好。
+3. windows下面打开版本树慢时，可以在host文件里加上 127.0.0.1		view
+
+
+
+
+
+做ln和merge的区别， merge一个目录 ，会拉一个分支，ln不会拉分支，需要再拉分支。
+
+
+
+Best Regards
+Wenlong Wang
+
+

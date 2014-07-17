@@ -1,0 +1,25 @@
+#! /usr/bin/expect
+
+set timeout -1
+
+set USERNAME [lindex $argv 0]
+set PASSWORD [lindex $argv 1]
+set IP [lindex $argv 2]
+set COMMANDS [lindex $argv 3]
+
+spawn ssh $USERNAME@$IP
+send "\r"
+expect {
+	"*yes/no" { send "yes\r"; exp_continue}
+	"*password:" { send "$PASSWORD"; send "\r" }
+        "Connection timed out" { puts "Can not connect to $IP"; exit 1; }
+}
+
+expect ">*"
+#interact
+
+send "${COMMANDS}\r"
+
+expect ">"
+send "exit\r"
+expect eof

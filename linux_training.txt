@@ -1,0 +1,234 @@
+valgrind 巨强大，内存相关的都可以做。
+
+ELF文件
+代码，静态数据 ， 动态链接，符号表，（调试符合表）
+
+crt，
+_start()-->__libcstart_main()-->main()，
+
+libc.so可以执行，虽然没有main函数
+readelf -h 可执行文件
+
+.o文件没有program header,
+
+
+
+readelf -l 可执行文件 ， programs headeers段的配置
+readelf -S看section
+readelf -s看具体一个section的符号表
+从网上找一个关于ELF的文档
+
+
+
+符号表
+全局变量 
+int k = 0; data区域，强定义
+int k; bss里面
+
+影响链接行为
+
+弱服从强
+
+
+能用静态就不用全局，如果必须用全局，必须赋初值
+
+shell code 写病毒，缓冲区攻击
+
+
+
+gcc -O0不优化， -O2等
+gcc -S -O0 abc.c
+
+gdb
+
+r 运行
+l打印代码，l 2打印第2行， l 函数名，打函数
+
+b 行号，在某一行打断点，或者 b 函数名
+e.g 如果是b 10那么在9行的最后，开始断
+info frame查看详细信息
+
+栈里面有参数，返回值，前一个frame的栈顶
+
+info r ebp 看ebp 寄存器的值
+
+watchpoint断点  help watch
+watchpoint可以加地址，可看地址的watchpoint
+c continue继续执行
+s 单步执行下一行，执行路径step into
+n 下一步，跳过 step over
+
+si 单步，指令为单位
+ni 
+bt 显示栈信息
+x 指令数 地址     从地址开始打出（指令数）行反汇编
+
+info symbol 打印符号表
+
+
+disass main反汇编                   
+  
+	                                                       国外vpn
+                                                           lowendbox  vpn Paypal
+
+														   
+p rsp
+info reg $rsp
+
+
+
+gdb还支持远程debug
+
+
+core dump跟信号相关的，man 7 signal
+
+
+给程序发SIGABRT，将导致 段异常
+
+
+
+ulimit -a显示栈尺寸
+ulimit -c 2000 blocks(k) 设置core的大小
+
+
+file查看文件类型
+
+
+readelf -h core
+
+
+调试时用
+gdb 程序名 core
+
+core文件产生失败的问题
+
+ulimit -a
+ulimit -c
+linux下面没有r权限，也可以有x权限。所以，如果当前文件没有读权限， 不会产生core
+如果当前用户的setuid跟当前用户权限不一致，也不产生core
+
+
+
+
+
+
+
+
+
+
+
+
+C程序的warning要注意，有些是头文件没有包含齐时出现的，比如调用 strcpy但是没有包含头文件string.h，那个warning
+C程序允许函数没定义就出现。gcc 4.xx之后，会有warning
+
+
+
+
+
+
+
+strip 分离符号表
+
+拆分符号表， 不含调试符号表
+eu-strip segfault -f segfault.sym
+
+
+objcopy
+
+
+nhf0424@gmail.com
+
+
+
+
+
+
+
+
+2013 11 06
+信号 能少用尽量少用     shell code
+
+
+mmap  同一个.so在整个内存中只有一份，不同进程怎么区分数据
+mmap 相同位置的频繁操作
+映射成功之后，文件标识符可以close
+linux文件操作只会对PAGE_CACHE操作
+
+strace 系统调用追踪，只能调用系统调用的操作，两个操作之间的行为透明
+
+wine  
+
+Valgrind工具
+检查内存泄漏
+
+检查死锁  mutex cond semaplore
+
+
+
+
+
+
+内核
+Boot  初始化,CPU,主板上的定时器等  ---->创建init
+
+抢占式多任务 中断
+
+nice 
+
+man getpriority    -20------------+19
+普通用户只能降低优先级
+
+
+man sched_setscheduler
+
+man -k xxx 过滤
+
+
+内存
+页式管理 ， 段式管理（实模式不分页只分段），分区
+RISK的CPU没有段的
+
+
+
+分区，物理内存是分区的zone， DMA区->Nomal区->HIGH区
+
+分区里的内存用完时，会换出到SWAP
+内核分DMA和NORMAL, 应用通常分NORMAL和HIGH
+
+32位系统
+|------------- 64G
+|
+|HIGH
+|
+|------------- 4G
+|NORMAL
+|
+|-------------- 1M
+|DMA 
+|-------------- 0
+
+
+vmstat 1 一秒查看一次内存
+
+调整block的调度算法
+/sys/block/sda/queue  
+cat scheduler
+
+echo deadline > scheduler
+
+
+Linux 信号
+异步的消息传递机制，linux下有64个，32个标准信号，32个扩展信号。
+signal函数尽量不用，会有重入的问题，。用sigaction
+
+信号触发时，不会排队，如果排的话，只能排一个。
+信号何时响应？
+
+标准信号用在与内核间的通信，或者管理员。
+实时信号是排队的，
+
+DBus 进程间通信，可以广播。它是一个库
+
+标准信号优先，RT信号在后，RT信号的优先就在排队。
+
+ps ax -L

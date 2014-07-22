@@ -1,0 +1,41 @@
+1.ct mkview -tag wenlongw_view /localdisk/view_store/wenlongw_view.vws
+
+2.
+ ct mkbrtype -nc wenlongw
+ ct mkbrtype -nc wenlongw_dev
+ 
+3.
+View:** wenlongw_view **>ct catcs
+element * CHECKEDOUT
+element * /main/wenlongw/wenlong_dev/LATEST
+element * /main/wenlongw/LATEST -mkbranch wenlongw_dev
+element * /main/LATEST -mkbranch wenlongw
+
+4.
+ct mkdir wenlongw
+cd wenlongw
+c mkelem -eltype text_file wenlongw
+ct rmbranch wenlongw.txt@@/main/wenlongw/wenlongw_dev
+
+6.
+ct mklabel -recurse WENLONGW_DEV_1 .
+
+7.
+8.
+Creation comments for "wenlongw":
+.
+Error: duplicate name 'wenlongw' found in directory version wenlongw@@/main/wenlongw/wenlongw_dev/1
+cleartool: Warning: Trigger "ForbidEvilTwins" has refused to let mkelem proceed.
+cleartool: Error: Unable to create element "wenlongw".
+
+9.
+ct merge -to /vobs/base_vob1/ -version /main/wenlongw/wenlongw_dev/1
+
+ct merge -to /vobs/base_vob1/wenlongw/ -version /main/wenlongw/wenlongw_dev/1
+
+11.
+ct merge -to /vobs/base_vob1/wenlongw/wenlongw -version /main/wenlongw/wenlongw_dev/1
+
+12.
+
+B_SYNC_OAMALL_COMP_CONV_LR131_TDD_121204.0@/enba_pvob

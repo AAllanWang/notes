@@ -1,0 +1,92 @@
+Tomcat 配置CGI perl
+
+1.	下载apache tomcat 
+官网http://tomcat.apache.org/ 目前最新版本是8.0.8。
+以Windows版本的apache-tomcat-8.0.8为例，下载链接为
+http://apache.dataguru.cn/tomcat/tomcat-8/v8.0.8/bin/apache-tomcat-8.0.8-windows-x86.zip
+下载完毕后，解压到自己的目录。
+2.	配置环境
+运行tomcat 8.0，需要安装Java SE 7 or later。
+安装perl，并将其添加到环境变量path中。
+设置环境变量JAVA_HOME为Java的安装目录，例如C:\Program Files\Java\jdk1.7.0_45
+设置环境变量CATALINA_HOME为tomcat的解压目录，例如E:\Tomcat\apache-tomcat-8.0.8
+3.	配置web.xml
+可以修改%CATALINA_HOME%/conf/web.xml，也可以拷贝%CATALINA_HOME%/conf/web.xml到自己的web目录的WEB-INF下面，修改自己web的/WEB-INF/web.xml
+修改内容是:
+1)	去掉注释 ，添加executable
+<!—原始文件
+    <servlet>
+        <servlet-name>cgi</servlet-name>
+        <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
+        <init-param>
+          <param-name>debug</param-name>
+          <param-value>0</param-value>
+        </init-param>
+        <init-param>
+          <param-name>cgiPathPrefix</param-name>
+          <param-value>WEB-INF/cgi</param-value>
+        </init-param>
+         <load-on-startup>5</load-on-startup>
+    </servlet>
+-->
+
+<!—修改后的文件 -->
+    <servlet>
+        <servlet-name>cgi</servlet-name>
+        <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
+        <init-param>
+          <param-name>debug</param-name>
+          <param-value>0</param-value>
+        </init-param>
+        <init-param>  
+          <param-name>executable</param-name>
+          <param-value>D:/strawberry/perl/bin/perl.exe</param-value>  
+        </init-param>  
+        <init-param>
+          <param-name>cgiPathPrefix</param-name>
+          <param-value>WEB-INF/cgi</param-value>
+		</init-param>
+        <init-param>   
+          <param-name>passShellEnvironment</param-name>   
+          <param-value>true</param-value>   
+        </init-param> 
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+2)	去掉cgi servlet-mapping的注释
+<!—原始文件
+    <servlet-mapping>
+        <servlet-name>cgi</servlet-name>
+        <url-pattern>/cgi-bin/*</url-pattern>
+    </servlet-mapping>
+-->
+
+<!—修改后的文件 -->
+    <servlet-mapping>
+        <servlet-name>cgi</servlet-name>
+        <url-pattern>/cgi-bin/*</url-pattern>
+    </servlet-mapping>
+
+4.	修改context.xml
+修改%CATALINA_HOME%/conf/context.xml，添加属性”privileged=ture”如下
+<Context privileged="true">
+5.	添加自己的cgi perl脚本
+在%CATALINA_HOME%/webapps目录下创建文件夹testcgi/WEB-INF/cgi。 
+在目录%CATALINA_HOME%/webapps/testcgi/WEB-INF/cgi下面创建文件test.pl，内容如下:
+
+print "Hello CGI perl World! first time.";
+print "content-type: text/html\n\n";
+print "Hello CGI perl World! second time.";
+print "<html>\n";  
+print "<head>\n";  
+print "<title>Tomcat CGI perl </title>\n";  
+print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";  
+print "</head>\n ";  
+print "<body bgcolor=\"#ff0000\">\n";  
+print "<h1>Hello CGI perl World!</h1>";
+print "</body>\n";
+print "</html>\n";
+
+6.	测试结果
+执行%CATALINA_HOME%/bin/startup.bat，启动tomcat。
+打开链接http://localhost:8080/testcgi/cgi-bin/test.pl ，应该能看到背景色为红的页面。
+7.	
